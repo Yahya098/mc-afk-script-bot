@@ -1,117 +1,119 @@
-<!-- Last updated: 2025-08-21T17:25:27Z -->
-# 🤖 Minecraft AFK Bot (Mineflayer-Based)
+# 🤖 24/7 Minecraft AFK Bot (GitHub Actions & Mineflayer)
 
-This is a lightweight Minecraft Java AFK Bot powered by [Mineflayer](https://github.com/PrismarineJS/mineflayer). It connects to a Java server, performs basic movements to avoid AFK detection, and can be customized via a simple configuration file.
+A robust, cloud-ready Minecraft Java AFK Bot powered by [Mineflayer](https://github.com/PrismarineJS/mineflayer). Engineered to run automatically 24/7 via **GitHub Actions** or locally, stay online as long as possible, avoid AFK kicks, and automatically reconnect after **1 minute** if disconnected or if the server goes offline.
 
-<p>
-  <a href="https://discord.gg/SjQydGvs5p" target="_blank">
-    <img src="https://img.shields.io/badge/Discord-Join-7289DA?logo=discord&logoColor=white" alt="Discord" width="300" />
-  </a>
-</p>
-
-<p>
-  <a href="https://buy.polar.sh/polar_cl_yODs3Ofw3OH6yaZYZYBgRSSZKYneEpLjkBm702IGyN2" target="_blank">
-    <img src="https://img.shields.io/badge/💖_Support_&_Contribute-8B5CF6?logoColor=white" alt="Contribute on Polar" width="300" />
-  </a>
-</p>
-
-# ⭐ Star this project, fork and use!
-
-## ⚠️ Warning Before You Begin
-
-- Before starting the bot, please make sure that the Offline Mode (Pirated/Not Original) option in the settings section of your Aternos server is active.
-
-- Secure the bot to protect it from monsters in the game.
+Pre-configured to join **`uni.progamer.me`**.
 
 ---
 
 ## ✨ Features
 
-* Connect to Minecraft Java servers (IP + port)
-* Customize bot username
-* Control chunk loading and memory usage
-* Periodic chunk pruning to reduce resource usage
-* Auto-movement behavior: step forward/backward, jump, sneak, loop
-* Easy configuration via `config.json`
+- **🚀 GitHub Actions Powered**: Run 24/7 without needing your own server, VPS, or keeping your computer on.
+- **🔄 Auto-Reconnect (1-Minute Delay)**: If the server goes offline, restarts, or the bot is kicked/disconnected, it automatically waits 1 minute (60 seconds) and rejoins.
+- **⏳ Longest Possible Uptime**: Handles GitHub Actions' 6-hour runner limit with graceful runner rotation and scheduled cron triggers (`0 */5 * * *`).
+- **🛡️ Concurrency Safeguard**: Prevents multiple bot instances with the same username from colliding and kicking each other out.
+- **🏃 Smart Anti-AFK Routine**: Sneaking, slight positional shifts, arm swings, and natural head rotation to evade AFK kick plugins.
+- **💀 Auto-Respawn**: Automatically respawns in 2 seconds if killed by mobs or hazards.
+- **🔐 AuthMe Support**: Optional `/register` and `/login` automated execution for offline/cracked servers.
+- **⚙️ Dual Configuration**: Configure via `config.json` or seamlessly through GitHub Secrets / Environment Variables.
 
 ---
 
-## ⚡ Installation
+## 🚀 Setting Up on GitHub Actions
 
-### 1. Clone the repository
+### 1. Push or Fork this Repository to GitHub
 
-```bash
-git clone https://github.com/nuekkis/Minecraft-AFK-Bot.git
-cd Minecraft-AFK-Bot
-```
+Ensure all files (including `.github/workflows/afk-bot.yml`, `bot.js`, `package.json`, and `config.json`) are committed to your GitHub repository on `main` or `master`.
 
-### 2. Install dependencies
+### 2. (Optional) Configure Repository Secrets
+
+If you want to customize values without modifying code or protect sensitive data (e.g., in-game passwords), go to your GitHub repository:
+**Settings** → **Secrets and variables** → **Actions** → **New repository secret**:
+
+| Secret Name | Description | Default if omitted |
+|-------------|-------------|--------------------|
+| `SERVER_HOST` | Server host / address | `uni.progamer.me` |
+| `SERVER_PORT` | Server port | `25565` |
+| `BOT_USERNAME` | Bot in-game username | `AFK_Bot` |
+| `BOT_VERSION` | Minecraft version | `1.20.4` |
+| `AUTH_PASSWORD` | In-game password for `/login` & `/register` | *(None)* |
+| `PAT_TOKEN` | Personal Access Token (`actions:write`) for instant re-dispatch | *(Uses GITHUB_TOKEN / Cron)* |
+
+### 3. Enable Workflows and Run
+
+1. Go to the **Actions** tab in your GitHub repository.
+2. If prompted, click **"I understand my workflows, go ahead and enable them"**.
+3. Select **"Minecraft AFK Bot"** from the left sidebar.
+4. Click **Run workflow** (you can optionally override the host, port, username, or version in the modal).
+5. The bot will automatically start and stay online! The workflow also runs on a scheduled cron (`0 */5 * * *`) to maintain continuous uptime.
+
+---
+
+## 💻 Running Locally
+
+### 1. Install Dependencies
 
 ```bash
 npm install
 ```
 
-### 3. Configure `config.json`
+### 2. Configure Settings
+
+Edit [`config.json`](config.json):
 
 ```json
 {
-  "serverHost": "yourserver.aternos.me",
+  "serverHost": "uni.progamer.me",
   "serverPort": 25565,
-  "botUsername": "MyBotName",
-  "botChunk": 4
+  "botUsername": "AFK_Bot",
+  "botVersion": "1.20.4",
+  "botChunk": 2,
+  "reconnectDelayMs": 60000,
+  "authPassword": ""
 }
 ```
 
-> ⚠️ Make sure the server is in offline mode if you're not using premium accounts.
+### 3. Start the Bot
 
----
+```bash
+npm start
+```
 
-## 🤖 Starting the Bot
+Or:
 
 ```bash
 node bot.js
 ```
 
-On successful connection:
+---
 
-* You'll see `✅ BotName is Ready!` in the console
-* After 5 seconds, all loaded chunks are cleared
-* Every 20 seconds, any chunks beyond a 6-chunk radius will be removed
+## ⚙️ Configuration Reference
+
+| Option | Env Variable | Default | Description |
+|---|---|---|---|
+| `serverHost` | `SERVER_HOST` | `uni.progamer.me` | Server IP or hostname |
+| `serverPort` | `SERVER_PORT` | `25565` | Minecraft server port |
+| `botUsername` | `BOT_USERNAME` | `AFK_Bot` | Display name of the bot |
+| `botVersion` | `BOT_VERSION` | `1.20.4` | Minecraft version (e.g. `1.20.4`) |
+| `reconnectDelayMs` | `RECONNECT_DELAY_MS` | `60000` | Reconnect cooldown (1 min = 60000ms) |
+| `botChunk` | `BOT_CHUNK` | `2` | View distance chunk radius |
+| `authPassword` | `AUTH_PASSWORD` | `""` | Password sent to `/register` and `/login` |
+| `maxRunTimeMinutes` | `MAX_RUN_TIME_MINUTES` | `345` | Minutes to run before clean exit in GH Actions |
 
 ---
 
-## ⚙️ Configuration Options (`config.json`)
+## 🔄 How the Auto-Reconnect Works
 
-| Key            | Description                                |
-| -------------- | ------------------------------------------ |
-| `serverHost`         | IP or domain of your Minecraft server      |
-| `serverPort`         | Server port (default is 25565)             |
-| `botUsername`     | The bot's visible name in-game             |
-| `botChunk` | Radius of loaded chunks (recommended: 1–6) |
-
----
-
-## ⚠️ Notes
-
-* **Skins**: Skins might not appear properly if the server is in offline mode.
-* **Sneak Movement**: The bot uses `setControlState('sneak', true)`, but some servers may block or ignore this action.
-* **AFK Prevention**: The bot periodically moves, sneaks, and jumps to prevent disconnection due to inactivity.
-
----
-
-## 📚 Resources & Contributions
-
-* [Mineflayer Docs](https://mineflayer.prismarine.js.org/)
-* [PrismarineJS GitHub](https://github.com/PrismarineJS/)
-
-Feel free to contribute by opening a pull request or submitting an issue.
+1. When the server goes down, restarts, or kicks the bot, Mineflayer detects the disconnection (`kicked`, `error`, or `end` event).
+2. The bot logs the event:
+   ```
+   [RECONNECT] Server or connection went offline (Disconnected). Waiting 60 seconds before reconnecting...
+   ```
+3. A 60-second timer starts. All movement intervals and previous listeners are cleanly torn down.
+4. Once 60 seconds have elapsed, the bot attempts to connect to `uni.progamer.me:25565` again. If the server is still offline, it waits another 60 seconds and retries until the server is back up.
 
 ---
 
 ## 📄 License
 
-This project is licensed under the MIT License.
-
----
-
-Get started now and keep your server active with a smart, customizable bot! ⛏️
+This project is licensed under the [MIT License](LICENSE).

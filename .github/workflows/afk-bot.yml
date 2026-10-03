@@ -1,0 +1,81 @@
+name: Minecraft AFK Bot
+
+on:
+  # Triggers when code is pushed to main or master
+  push:
+    branches: [ main, master ]
+
+  # Allows manual triggering with optional custom parameters
+  workflow_dispatch:
+    inputs:
+      server_host:
+        description: 'Server Host/IP'
+        required: false
+        default: 'uni.progamer.me'
+      server_port:
+        description: 'Server Port'
+        required: false
+        default: '25565'
+      bot_username:
+        description: 'Bot In-Game Username'
+        required: false
+        default: 'AFK_Bot'
+      bot_version:
+        description: 'Minecraft Version (e.g., 1.20.4)'
+        required: false
+        default: '1.20.4'
+
+  # Scheduled trigger to ensure continuous 24/7 presence:
+  # Runs every 5 hours (before GitHub's 6-hour runner limit)
+  schedule:
+    - cron: '0 */5 * * *'
+
+# Ensure only one instance of the bot is active at any time
+# cancel-in-progress: true smoothly rotates to the incoming scheduled/triggered run
+concurrency:
+  group: mc-afk-bot
+  cancel-in-progress: true
+
+jobs:
+  run-afk-bot:
+    name: Keep Bot Online
+    runs-on: ubuntu-latest
+    timeout-minutes: 360 # Maximum allowed execution time for GitHub-hosted runners
+
+    permissions:
+      contents: read
+      actions: write
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci || npm install
+
+      - name: Launch Minecraft AFK Bot
+        id: bot_runner
+        env:
+          SERVER_HOST: ${{ github.event.inputs.server_host || secrets.SERVER_HOST || 'uni.progamer.me' }}
+          SERVER_PORT: ${{ github.event.inputs.server_port || secrets.SERVER_PORT || '25565' }}
+          BOT_USERNAME: ${{ github.event.inputs.bot_username || secrets.BOT_USERNAME || 'AFK_Bot' }}
+          BOT_VERSION: ${{ github.event.inputs.bot_version || secrets.BOT_VERSION || '1.20.4' }}
+          AUTH_PASSWORD: ${{ secrets.AUTH_PASSWORD || '' }}
+          RECONNECT_DELAY_MS: ${{ secrets.RECONNECT_DELAY_MS || '60000' }}
+          # Run for 345 minutes (~5h 45m), then cleanly exit for the next cycle
+          MAX_RUN_TIME_MINUTES: '345'
+        run: node bot.js
+
+      - name: Dispatch Next Continuous Run
+        if: always() && steps.bot_runner.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Triggering next workflow run for seamless AFK..."
+          gh workflow run afk-bot.yml --ref ${{ github.ref_name }} || echo "Workflow re-dispatch completed or handled by schedule."

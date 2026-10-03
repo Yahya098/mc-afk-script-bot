@@ -1,6 +1,9 @@
 {
-  "serverHost": "example.aternos.me",
-  "serverPort": 12345,
-  "botUsername": "MyBot",
-  "botChunk": 1
+  "serverHost": "uni.progamer.me",
+  "serverPort": 25565,
+  "botUsername": "AFK_Bot",
+  "botVersion": "1.20.4",
+  "botChunk": 2,
+  "reconnectDelayMs": 60000,
+  "authPassword": ""
 }
