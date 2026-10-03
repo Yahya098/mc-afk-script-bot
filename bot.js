@@ -45,7 +45,6 @@ let bot = null;
 let isReconnecting = false;
 let reconnectTimer = null;
 let antiAfkInterval = null;
-let movementPhase = 0;
 let isShuttingDown = false;
 
 /**
@@ -59,57 +58,34 @@ function stopAfkActivity() {
 }
 
 /**
- * Anti-AFK routine: sneaks, looks around, slightly steps forward/backward, and swings arm
+ * Safe Anti-AFK routine:
+ * Rotates view smoothly and swings arm periodically.
+ * Does NOT move XYZ coordinates or jump, preventing 'invalid_player_movement' kicks.
  */
 function startAfkActivity() {
   stopAfkActivity();
 
   if (!bot || !bot.entity) return;
 
-  // Set sneak to avoid falling off edges or unexpected movements
-  try {
-    bot.setControlState('sneak', true);
-  } catch (_) {}
-
   antiAfkInterval = setInterval(() => {
     if (!bot || !bot.entity) return;
 
     try {
-      switch (movementPhase) {
-        case 0:
-          // Step slightly forward
-          bot.setControlState('forward', true);
-          bot.setControlState('back', false);
-          bot.swingArm('right');
-          break;
-        case 1:
-          // Stop forward and step backward
-          bot.setControlState('forward', false);
-          bot.setControlState('back', true);
-          break;
-        case 2:
-          // Reset movement, rotate view slightly
-          bot.setControlState('forward', false);
-          bot.setControlState('back', false);
-          const currentYaw = bot.entity.yaw || 0;
-          const currentPitch = bot.entity.pitch || 0;
-          const newYaw = currentYaw + (Math.random() * 0.4 - 0.2);
-          bot.look(newYaw, currentPitch, true).catch(() => {});
-          break;
-        case 3:
-          // Subtle jump or arm swing
-          bot.setControlState('jump', true);
-          setTimeout(() => {
-            if (bot) bot.setControlState('jump', false);
-          }, 350);
-          break;
-      }
+      // Natural slight head rotation (evades AFK checks without moving coordinates)
+      const currentYaw = bot.entity.yaw || 0;
+      const currentPitch = bot.entity.pitch || 0;
+      const newYaw = currentYaw + (Math.random() * 0.6 - 0.3);
+      const newPitch = Math.max(-0.4, Math.min(0.4, currentPitch + (Math.random() * 0.2 - 0.1)));
+      bot.look(newYaw, newPitch, true).catch(() => {});
 
-      movementPhase = (movementPhase + 1) % 4;
+      // Periodic arm swing animation
+      if (Math.random() > 0.3) {
+        bot.swingArm('right');
+      }
     } catch (err) {
       log('DEBUG', `AFK routine tick error: ${err.message}`);
     }
-  }, 2500);
+  }, 3500);
 }
 
 /**
@@ -165,11 +141,40 @@ function createBot() {
     return;
   }
 
+  // Protocol Fix for modern MC (1.21.3+ / 26.x):
+  // Servers kick clients that send redundant stationary 'position' packets every 1000ms.
+  // We intercept and convert stationary position packets into standard 'flying' packets.
+  let hasSpawned = false;
+  let lastX = null, lastY = null, lastZ = null;
+
+  const originalWrite = bot._client.write.bind(bot._client);
+  bot._client.write = function(name, params) {
+    if (hasSpawned && (name === 'position' || name === 'position_look')) {
+      if (lastX !== null && params.x === lastX && params.y === lastY && params.z === lastZ) {
+        return originalWrite('flying', {
+          onGround: params.flags ? params.flags.onGround : (params.onGround ?? true),
+          flags: params.flags || { onGround: true }
+        });
+      }
+      lastX = params.x;
+      lastY = params.y;
+      lastZ = params.z;
+    }
+    return originalWrite(name, params);
+  };
+
   bot.once('login', () => {
     log('SUCCESS', `Bot '${CONFIG.username}' has successfully logged into ${CONFIG.host}:${CONFIG.port}!`);
   });
 
   bot.on('spawn', () => {
+    hasSpawned = true;
+    if (bot.entity && bot.entity.position) {
+      lastX = bot.entity.position.x;
+      lastY = bot.entity.position.y;
+      lastZ = bot.entity.position.z;
+    }
+
     log('SUCCESS', `Bot spawned in world! Starting anti-AFK activity.`);
 
     // If server requires AuthMe /login or /register
@@ -225,7 +230,6 @@ function createBot() {
   bot.on('message', (message) => {
     const text = message.toString().trim();
     if (text) {
-      // Filter out empty lines or ping notifications
       log('CHAT', text);
     }
   });
