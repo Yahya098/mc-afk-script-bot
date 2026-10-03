@@ -2,7 +2,7 @@
 
 A robust, cloud-ready Minecraft Java AFK Bot powered by [Mineflayer](https://github.com/PrismarineJS/mineflayer). Engineered to run automatically 24/7 via **GitHub Actions** or locally, stay online as long as possible, avoid AFK kicks, and automatically reconnect after **1 minute** if disconnected or if the server goes offline.
 
-Pre-configured to join **`uni.progamer.me`**.
+Pre-configured to join **`coldhot.aternos.me:50668`** (Minecraft **`26.1.2`**).
 
 ---
 
@@ -32,10 +32,10 @@ If you want to customize values without modifying code or protect sensitive data
 
 | Secret Name | Description | Default if omitted |
 |-------------|-------------|--------------------|
-| `SERVER_HOST` | Server host / address | `uni.progamer.me` |
-| `SERVER_PORT` | Server port | `25565` |
+| `SERVER_HOST` | Server host / address | `coldhot.aternos.me` |
+| `SERVER_PORT` | Server port | `50668` |
 | `BOT_USERNAME` | Bot in-game username | `AFK_Bot` |
-| `BOT_VERSION` | Minecraft version | `1.20.4` |
+| `BOT_VERSION` | Minecraft version | `26.1.2` |
 | `AUTH_PASSWORD` | In-game password for `/login` & `/register` | *(None)* |
 | `PAT_TOKEN` | Personal Access Token (`actions:write`) for instant re-dispatch | *(Uses GITHUB_TOKEN / Cron)* |
 
@@ -63,10 +63,10 @@ Edit [`config.json`](config.json):
 
 ```json
 {
-  "serverHost": "uni.progamer.me",
-  "serverPort": 25565,
+  "serverHost": "coldhot.aternos.me",
+  "serverPort": 50668,
   "botUsername": "AFK_Bot",
-  "botVersion": "1.20.4",
+  "botVersion": "26.1.2",
   "botChunk": 2,
   "reconnectDelayMs": 60000,
   "authPassword": ""
@@ -91,10 +91,10 @@ node bot.js
 
 | Option | Env Variable | Default | Description |
 |---|---|---|---|
-| `serverHost` | `SERVER_HOST` | `uni.progamer.me` | Server IP or hostname |
-| `serverPort` | `SERVER_PORT` | `25565` | Minecraft server port |
+| `serverHost` | `SERVER_HOST` | `coldhot.aternos.me` | Server IP or hostname |
+| `serverPort` | `SERVER_PORT` | `50668` | Minecraft server port |
 | `botUsername` | `BOT_USERNAME` | `AFK_Bot` | Display name of the bot |
-| `botVersion` | `BOT_VERSION` | `1.20.4` | Minecraft version (e.g. `1.20.4`) |
+| `botVersion` | `BOT_VERSION` | `26.1.2` | Minecraft version (e.g. `26.1.2`) |
 | `reconnectDelayMs` | `RECONNECT_DELAY_MS` | `60000` | Reconnect cooldown (1 min = 60000ms) |
 | `botChunk` | `BOT_CHUNK` | `2` | View distance chunk radius |
 | `authPassword` | `AUTH_PASSWORD` | `""` | Password sent to `/register` and `/login` |
@@ -110,7 +110,7 @@ node bot.js
    [RECONNECT] Server or connection went offline (Disconnected). Waiting 60 seconds before reconnecting...
    ```
 3. A 60-second timer starts. All movement intervals and previous listeners are cleanly torn down.
-4. Once 60 seconds have elapsed, the bot attempts to connect to `uni.progamer.me:25565` again. If the server is still offline, it waits another 60 seconds and retries until the server is back up.
+4. Once 60 seconds have elapsed, the bot attempts to connect to `coldhot.aternos.me:50668` again. If the server is still offline, it waits another 60 seconds and retries until the server is back up.
 
 ---
 

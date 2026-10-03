@@ -11,19 +11,19 @@ on:
       server_host:
         description: 'Server Host/IP'
         required: false
-        default: 'uni.progamer.me'
+        default: 'coldhot.aternos.me'
       server_port:
         description: 'Server Port'
         required: false
-        default: '25565'
+        default: '50668'
       bot_username:
         description: 'Bot In-Game Username'
         required: false
         default: 'AFK_Bot'
       bot_version:
-        description: 'Minecraft Version (e.g., 1.20.4)'
+        description: 'Minecraft Version (e.g., 26.1.2)'
         required: false
-        default: '1.20.4'
+        default: '26.1.2'
 
   # Scheduled trigger to ensure continuous 24/7 presence:
   # Runs every 5 hours (before GitHub's 6-hour runner limit)
@@ -57,15 +57,15 @@ jobs:
           cache: 'npm'
 
       - name: Install Dependencies
-        run: npm ci || npm install
+        run: npm install
 
       - name: Launch Minecraft AFK Bot
         id: bot_runner
         env:
-          SERVER_HOST: ${{ github.event.inputs.server_host || secrets.SERVER_HOST || 'uni.progamer.me' }}
-          SERVER_PORT: ${{ github.event.inputs.server_port || secrets.SERVER_PORT || '25565' }}
+          SERVER_HOST: ${{ github.event.inputs.server_host || secrets.SERVER_HOST || 'coldhot.aternos.me' }}
+          SERVER_PORT: ${{ github.event.inputs.server_port || secrets.SERVER_PORT || '50668' }}
           BOT_USERNAME: ${{ github.event.inputs.bot_username || secrets.BOT_USERNAME || 'AFK_Bot' }}
-          BOT_VERSION: ${{ github.event.inputs.bot_version || secrets.BOT_VERSION || '1.20.4' }}
+          BOT_VERSION: ${{ github.event.inputs.bot_version || secrets.BOT_VERSION || '26.1.2' }}
           AUTH_PASSWORD: ${{ secrets.AUTH_PASSWORD || '' }}
           RECONNECT_DELAY_MS: ${{ secrets.RECONNECT_DELAY_MS || '60000' }}
           # Run for 345 minutes (~5h 45m), then cleanly exit for the next cycle

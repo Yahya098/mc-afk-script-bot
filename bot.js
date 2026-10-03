@@ -22,10 +22,10 @@ if (fs.existsSync(configPath)) {
 
 // Configuration options with environment variable overrides
 const CONFIG = {
-  host: process.env.SERVER_HOST || fileConfig.serverHost || 'uni.progamer.me',
-  port: parseInt(process.env.SERVER_PORT || fileConfig.serverPort || '25565', 10),
+  host: process.env.SERVER_HOST || fileConfig.serverHost || 'coldhot.aternos.me',
+  port: parseInt(process.env.SERVER_PORT || fileConfig.serverPort || '50668', 10),
   username: process.env.BOT_USERNAME || fileConfig.botUsername || 'AFK_Bot',
-  version: process.env.BOT_VERSION || fileConfig.botVersion || '1.20.4',
+  version: process.env.BOT_VERSION || fileConfig.botVersion || '26.1.2',
   auth: process.env.BOT_AUTH || fileConfig.botAuth || 'offline',
   viewDistance: parseInt(process.env.BOT_CHUNK || fileConfig.botChunk || '2', 10),
   reconnectDelayMs: parseInt(process.env.RECONNECT_DELAY_MS || fileConfig.reconnectDelayMs || '60000', 10),
