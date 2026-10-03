@@ -1,7 +1,7 @@
 {
   "serverHost": "coldhot.aternos.me",
   "serverPort": 50668,
-  "botUsername": "AFK_Bot",
+  "botUsername": "ShadowCrafter",
   "botVersion": "26.1.2",
   "botChunk": 2,
   "reconnectDelayMs": 60000,

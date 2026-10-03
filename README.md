@@ -34,7 +34,7 @@ If you want to customize values without modifying code or protect sensitive data
 |-------------|-------------|--------------------|
 | `SERVER_HOST` | Server host / address | `coldhot.aternos.me` |
 | `SERVER_PORT` | Server port | `50668` |
-| `BOT_USERNAME` | Bot in-game username | `AFK_Bot` |
+| `BOT_USERNAME` | Bot in-game username | `ShadowCrafter` |
 | `BOT_VERSION` | Minecraft version | `26.1.2` |
 | `AUTH_PASSWORD` | In-game password for `/login` & `/register` | *(None)* |
 | `PAT_TOKEN` | Personal Access Token (`actions:write`) for instant re-dispatch | *(Uses GITHUB_TOKEN / Cron)* |
@@ -65,7 +65,7 @@ Edit [`config.json`](config.json):
 {
   "serverHost": "coldhot.aternos.me",
   "serverPort": 50668,
-  "botUsername": "AFK_Bot",
+  "botUsername": "ShadowCrafter",
   "botVersion": "26.1.2",
   "botChunk": 2,
   "reconnectDelayMs": 60000,
@@ -93,7 +93,7 @@ node bot.js
 |---|---|---|---|
 | `serverHost` | `SERVER_HOST` | `coldhot.aternos.me` | Server IP or hostname |
 | `serverPort` | `SERVER_PORT` | `50668` | Minecraft server port |
-| `botUsername` | `BOT_USERNAME` | `AFK_Bot` | Display name of the bot |
+| `botUsername` | `BOT_USERNAME` | `ShadowCrafter` | Display name of the bot |
 | `botVersion` | `BOT_VERSION` | `26.1.2` | Minecraft version (e.g. `26.1.2`) |
 | `reconnectDelayMs` | `RECONNECT_DELAY_MS` | `60000` | Reconnect cooldown (1 min = 60000ms) |
 | `botChunk` | `BOT_CHUNK` | `2` | View distance chunk radius |

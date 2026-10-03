@@ -24,7 +24,7 @@ if (fs.existsSync(configPath)) {
 const CONFIG = {
   host: process.env.SERVER_HOST || fileConfig.serverHost || 'coldhot.aternos.me',
   port: parseInt(process.env.SERVER_PORT || fileConfig.serverPort || '50668', 10),
-  username: process.env.BOT_USERNAME || fileConfig.botUsername || 'AFK_Bot',
+  username: process.env.BOT_USERNAME || fileConfig.botUsername || 'ShadowCrafter',
   version: process.env.BOT_VERSION || fileConfig.botVersion || '26.1.2',
   auth: process.env.BOT_AUTH || fileConfig.botAuth || 'offline',
   viewDistance: parseInt(process.env.BOT_CHUNK || fileConfig.botChunk || '2', 10),

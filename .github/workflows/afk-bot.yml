@@ -19,7 +19,7 @@ on:
       bot_username:
         description: 'Bot In-Game Username'
         required: false
-        default: 'AFK_Bot'
+        default: 'ShadowCrafter'
       bot_version:
         description: 'Minecraft Version (e.g., 26.1.2)'
         required: false
@@ -64,7 +64,7 @@ jobs:
         env:
           SERVER_HOST: ${{ github.event.inputs.server_host || secrets.SERVER_HOST || 'coldhot.aternos.me' }}
           SERVER_PORT: ${{ github.event.inputs.server_port || secrets.SERVER_PORT || '50668' }}
-          BOT_USERNAME: ${{ github.event.inputs.bot_username || secrets.BOT_USERNAME || 'AFK_Bot' }}
+          BOT_USERNAME: ${{ github.event.inputs.bot_username || secrets.BOT_USERNAME || 'ShadowCrafter' }}
           BOT_VERSION: ${{ github.event.inputs.bot_version || secrets.BOT_VERSION || '26.1.2' }}
           AUTH_PASSWORD: ${{ secrets.AUTH_PASSWORD || '' }}
           RECONNECT_DELAY_MS: ${{ secrets.RECONNECT_DELAY_MS || '60000' }}
