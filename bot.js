@@ -28,7 +28,7 @@ const CONFIG = {
   version: process.env.BOT_VERSION || fileConfig.botVersion || '26.1.2',
   auth: process.env.BOT_AUTH || fileConfig.botAuth || 'offline',
   viewDistance: parseInt(process.env.BOT_CHUNK || fileConfig.botChunk || '2', 10),
-  reconnectDelayMs: parseInt(process.env.RECONNECT_DELAY_MS || fileConfig.reconnectDelayMs || '60000', 10),
+  reconnectDelayMs: parseInt(process.env.RECONNECT_DELAY_MS || fileConfig.reconnectDelayMs || '1000', 10),
   authPassword: process.env.AUTH_PASSWORD || fileConfig.authPassword || '',
   maxRunTimeMinutes: parseInt(process.env.MAX_RUN_TIME_MINUTES || fileConfig.maxRunTimeMinutes || '345', 10),
 };
@@ -99,14 +99,18 @@ function scheduleReconnect(reason) {
 
   if (bot) {
     try {
-      bot.removeAllListeners();
+      bot.removeAllListeners('spawn');
+      bot.removeAllListeners('death');
+      bot.removeAllListeners('kicked');
+      bot.removeAllListeners('message');
+      bot.on('error', () => {});
       bot.end();
     } catch (_) {}
     bot = null;
   }
 
-  const delaySec = Math.round(CONFIG.reconnectDelayMs / 1000);
-  log('RECONNECT', `Server or connection went offline (${reason}). Waiting ${delaySec} seconds before reconnecting...`);
+  const delayText = CONFIG.reconnectDelayMs <= 1500 ? 'immediately (1s)' : `in ${Math.round(CONFIG.reconnectDelayMs / 1000)}s`;
+  log('RECONNECT', `Server or connection went offline (${reason}). Reconnecting ${delayText}...`);
 
   if (reconnectTimer) clearTimeout(reconnectTimer);
 
@@ -193,19 +197,25 @@ function createBot() {
   });
 
   bot.on('death', () => {
-    log('WARN', 'Bot died in-game. Respawning in 2 seconds...');
+    log('WARN', 'Bot died in-game. Respawning immediately...');
     stopAfkActivity();
-    setTimeout(() => {
-      if (bot) {
-        try {
-          bot.respawn();
-          log('INFO', 'Bot respawn triggered.');
-          startAfkActivity();
-        } catch (err) {
-          log('ERROR', `Respawn failed: ${err.message}`);
-        }
+    if (bot) {
+      try {
+        bot.respawn();
+        log('INFO', 'Bot respawned immediately.');
+        startAfkActivity();
+      } catch (err) {
+        log('ERROR', `Instant respawn failed: ${err.message}`);
+        setTimeout(() => {
+          if (bot) {
+            try {
+              bot.respawn();
+              startAfkActivity();
+            } catch (_) {}
+          }
+        }, 500);
       }
-    }, 2000);
+    }
   });
 
   bot.on('kicked', (reason) => {

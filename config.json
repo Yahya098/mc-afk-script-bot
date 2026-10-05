@@ -4,6 +4,6 @@
   "botUsername": "ShadowCrafter",
   "botVersion": "26.1.2",
   "botChunk": 2,
-  "reconnectDelayMs": 60000,
+  "reconnectDelayMs": 1000,
   "authPassword": ""
 }

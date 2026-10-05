@@ -9,11 +9,11 @@ Pre-configured to join **`coldhot.aternos.me:50668`** (Minecraft **`26.1.2`**).
 ## ✨ Features
 
 - **🚀 GitHub Actions Powered**: Run 24/7 without needing your own server, VPS, or keeping your computer on.
-- **🔄 Auto-Reconnect (1-Minute Delay)**: If the server goes offline, restarts, or the bot is kicked/disconnected, it automatically waits 1 minute (60 seconds) and rejoins.
+- **🔄 Instant Auto-Reconnect**: If the server goes offline, restarts, or the bot is kicked/disconnected, it immediately reconnects to get back online as fast as possible.
 - **⏳ Longest Possible Uptime**: Handles GitHub Actions' 6-hour runner limit with graceful runner rotation and scheduled cron triggers (`0 */5 * * *`).
 - **🛡️ Concurrency Safeguard**: Prevents multiple bot instances with the same username from colliding and kicking each other out.
-- **🏃 Smart Anti-AFK Routine**: Sneaking, slight positional shifts, arm swings, and natural head rotation to evade AFK kick plugins.
-- **💀 Auto-Respawn**: Automatically respawns in 2 seconds if killed by mobs or hazards.
+- **🏃 Smart Anti-AFK Routine**: Natural head rotation and periodic arm swings to safely evade AFK kick plugins.
+- **💀 Instant Auto-Respawn**: Automatically respawns immediately upon death if killed by mobs or hazards.
 - **🔐 AuthMe Support**: Optional `/register` and `/login` automated execution for offline/cracked servers.
 - **⚙️ Dual Configuration**: Configure via `config.json` or seamlessly through GitHub Secrets / Environment Variables.
 
@@ -68,7 +68,7 @@ Edit [`config.json`](config.json):
   "botUsername": "ShadowCrafter",
   "botVersion": "26.1.2",
   "botChunk": 2,
-  "reconnectDelayMs": 60000,
+  "reconnectDelayMs": 1000,
   "authPassword": ""
 }
 ```
@@ -95,7 +95,7 @@ node bot.js
 | `serverPort` | `SERVER_PORT` | `50668` | Minecraft server port |
 | `botUsername` | `BOT_USERNAME` | `ShadowCrafter` | Display name of the bot |
 | `botVersion` | `BOT_VERSION` | `26.1.2` | Minecraft version (e.g. `26.1.2`) |
-| `reconnectDelayMs` | `RECONNECT_DELAY_MS` | `60000` | Reconnect cooldown (1 min = 60000ms) |
+| `reconnectDelayMs` | `RECONNECT_DELAY_MS` | `1000` | Reconnect cooldown (1000ms = 1s instant) |
 | `botChunk` | `BOT_CHUNK` | `2` | View distance chunk radius |
 | `authPassword` | `AUTH_PASSWORD` | `""` | Password sent to `/register` and `/login` |
 | `maxRunTimeMinutes` | `MAX_RUN_TIME_MINUTES` | `345` | Minutes to run before clean exit in GH Actions |
@@ -104,13 +104,13 @@ node bot.js
 
 ## 🔄 How the Auto-Reconnect Works
 
-1. When the server goes down, restarts, or kicks the bot, Mineflayer detects the disconnection (`kicked`, `error`, or `end` event).
+1. When the server drops, restarts, or kicks the bot, Mineflayer detects the disconnection (`kicked`, `error`, or `end` event).
 2. The bot logs the event:
    ```
-   [RECONNECT] Server or connection went offline (Disconnected). Waiting 60 seconds before reconnecting...
+   [RECONNECT] Server or connection went offline (Disconnected). Reconnecting immediately (1s)...
    ```
-3. A 60-second timer starts. All movement intervals and previous listeners are cleanly torn down.
-4. Once 60 seconds have elapsed, the bot attempts to connect to `coldhot.aternos.me:50668` again. If the server is still offline, it waits another 60 seconds and retries until the server is back up.
+3. All previous listeners and intervals are cleanly reset.
+4. The bot immediately attempts to reconnect to `coldhot.aternos.me:50668`. If the server is still offline, it retries immediately until the server is back online.
 
 ---
 

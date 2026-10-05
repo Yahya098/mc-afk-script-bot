@@ -67,7 +67,7 @@ jobs:
           BOT_USERNAME: ${{ github.event.inputs.bot_username || secrets.BOT_USERNAME || 'ShadowCrafter' }}
           BOT_VERSION: ${{ github.event.inputs.bot_version || secrets.BOT_VERSION || '26.1.2' }}
           AUTH_PASSWORD: ${{ secrets.AUTH_PASSWORD || '' }}
-          RECONNECT_DELAY_MS: ${{ secrets.RECONNECT_DELAY_MS || '60000' }}
+          RECONNECT_DELAY_MS: ${{ secrets.RECONNECT_DELAY_MS || '1000' }}
           # Run for 345 minutes (~5h 45m), then cleanly exit for the next cycle
           MAX_RUN_TIME_MINUTES: '345'
         run: node bot.js
